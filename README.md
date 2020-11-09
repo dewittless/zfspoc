@@ -1,1 +1,4 @@
-# zfspoc
+Requirements
+- Ansible
+- Vagrant
+- VirtualBox
