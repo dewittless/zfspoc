@@ -32,3 +32,4 @@
 
   - name: Reboot
     reboot:
+      reboot_timeout: 60
