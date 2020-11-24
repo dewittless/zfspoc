@@ -13,8 +13,9 @@ Vagrant.configure(2) do |config|
   # Create the ZFS server
   config.vm.define "zfs" do |zfs|
     config.ssh.insert_key = false
-    zfs.vm.box = "generic/centos7"
-    zfs.vm.box_version = "2.0.6"
+    config.vm.synced_folder  ".", "/vagrant", disabled:true
+    zfs.vm.box = "centos/7"
+    zfs.vm.box_version = "2004.01"
     zfs.vm.hostname = "zfs"
     zfs.vm.network :private_network, ip: "192.168.60.31"
     zfs.vm.network :private_network, ip: "192.168.60.32"

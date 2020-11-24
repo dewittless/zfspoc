@@ -14,21 +14,44 @@
       backup: yes
     register: task_result
 
+  - name: Install Preq
+    yum:
+      name:
+      - epel-release
+      - "kernel-uname-r == 3.10.0-1160.6.1.el7.x86_64"
+      - "kernel-devel-uname-r == 3.10.0-1160.6.1.el7.x86_64"
+      state: latest
+
   - name: Reboot
     reboot:
       reboot_timeout: 60
 
-  - name: Install ZFSOnLinux Repo
-    yum:
-      name: "http://download.zfsonlinux.org/epel/zfs-release.el7_8.noarch.rpm"
-      state: present
+  - name: Copy ZFS RPMs to server.
+    synchronize:
+      src: ./zfs-rpms/
+      dest: /tmp/zfs-rpms/
+      recursive: yes
 
   - name: Install ZFS
     yum:
       name:
-      - kernel-devel
-      - zfs
-      state: latest
+      - /tmp/zfs-rpms/kmod-zfs-3.10.0-1160.6.1.el7.x86_64-0.8.5-1.el7.x86_64.rpm
+      - /tmp/zfs-rpms/libnvpair1-0.8.5-1.el7.x86_64.rpm
+      - /tmp/zfs-rpms/libuutil1-0.8.5-1.el7.x86_64.rpm
+      - /tmp/zfs-rpms/libzfs2-0.8.5-1.el7.x86_64.rpm
+      - /tmp/zfs-rpms/libzpool2-0.8.5-1.el7.x86_64.rpm
+      - /tmp/zfs-rpms/python2-pyzfs-0.8.5-1.el7.noarch.rpm
+      - /tmp/zfs-rpms/zfs-0.8.5-1.el7.x86_64.rpm
+      - /tmp/zfs-rpms/zfs-dracut-0.8.5-1.el7.noarch.rpm
+      state: present
+
+  - name: Create ZFS Conf file
+    copy:
+      dest: "/etc/modules-load.d/zfs.conf"
+      mode: 0644
+      owner: root
+      content: |
+        zfs
 
   - name: Reboot
     reboot:
